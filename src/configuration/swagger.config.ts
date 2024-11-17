@@ -5,9 +5,9 @@ const options = {
    definition: {
       openapi: '3.0.0',
       info: {
-         title: 'Blog API Docs',
+         title: 'Budget It API Docs',
          version: '1.0.0',
-         description: 'Endpoints documentation for the blog API'
+         description: 'Endpoints documentation for the Budget It API'
       }
    },
    // swaggerDefinition,
