@@ -56,145 +56,77 @@ paths:
                      schema:
                         $ref: '#/components/schemas/ErrorResponse'
 
-   # /savings:
-   #    post:
-   #       summary: 'Endpoint to create a create post'
-   #       tags:
-   #          - savings
-   #       operationId: 'CreateBlogRequest'
-   #       parameters:
-   #          - $ref: '#/components/parameters/AuthToken'
-   #       requestBody: 
-   #          content:
-   #             application/json:
-   #                schema: 
-   #                   $ref: '#/components/schemas/BlogPostRequest'
-   #          required: true
-   #       responses:
-   #          '200':
-   #             description: 'success'
-   #             content:
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/DefaultResponse'
-   #          '400':
-   #             description: 'error'
-   #             content:
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/BadRequestResponse'
+   /savings:
+      get:
+         summary: 'Endpoint to get savings balance'
+         tags:
+            - savings
+         operationId: 'GetSavingsBalance'
+         parameters:
+            - $ref: '#/components/parameters/AuthToken'
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/SavingsBalanceResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/BadRequestResponse'
       
-   # /savings/:blogId:
-   #    get:
-   #       summary: 'Endpoint to get a post by its ID'
-   #       tags:
-   #          - blog
-   #       operationId: 'GetBlogPostRequest'
-   #       parameters: 
-   #          - $ref: '#/components/parameters/BlogId'
-   #       responses: 
-   #          '200':
-   #             description: 'success'
-   #             content:
-   #                application/json:
-   #                   $ref: '#/components/schemas/BlogPost'
-   #          '400':
-   #             description: 'error'
-   #             content:
-   #                application/json:
-   #                   $ref: '#/components/schemas/BadRequestError'
+   /savings/:savingId:
+      post:
+         summary: 'Endpoint to top up savings balance'
+         tags:
+            - savings
+         operationId: 'TopUpSavingsRequest'
+         parameters: 
+            - $ref: '#/components/parameters/SavingId'
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/TopUpRequest'
+            required: true
+            
+         responses: 
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     $ref: '#/components/schemas/DefaultResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     $ref: '#/components/schemas/BadRequestError'
       
-   #    patch:
-   #       summary: 'Endpoint to publish a blog post'
-   #       tags: 
-   #          - blog
-   #       operationId: 'PublishBlogRequest'
-   #       parameters:
-   #          - $ref: '#/components/parameters/AuthToken'
-   #          - $ref: '#/components/parameters/BlogId'
-   #       responses: 
-   #          '200':
-   #             description: 'success'
-   #             content: 
-   #                application/json:
-   #                   schema: 
-   #                      $ref: '#/components/schemas/DefaultResponse'
-   #          '400': 
-   #             description: 'error'
-   #             content:
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/BadRequestResponse'
-      
-   #    put:
-   #       summary: 'Endpoint to edit a blog post'
-   #       tags: 
-   #          - blog
-   #       operationId: 'EditBlogPostRequest'
-   #       parameters:
-   #          - $ref: '#/components/parameters/AuthToken'
-   #          - $ref: '#/components/parameters/BlogId'
-   #       requestBody:
-   #          content:
-   #             application/json:
-   #                schema:
-   #                   $ref: '#/components/schemas/BlogPostRequest'
-   #       responses:
-   #          '200': 
-   #             description: 'success'
-   #             content:
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/DefaultResponse'
-      
-   #    delete:
-   #       summary: 'Endpoint to delete a blog post'
-   #       tags:
-   #          - blog
-   #       operationId: 'DeleteBlogPostRequest'
-   #       parameters:   
-   #          - $ref: '#/components/parameters/AuthToken'
-   #          - $ref: '#/components/parameters/BlogId'
-   #       responses:
-   #          '200': 
-   #             description: 'success'
-   #             content: 
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/DefaultResponse'
-   #          '400': 
-   #             description: 'error'
-   #             content: 
-   #                application/json:
-   #                   schema: 
-   #                      $ref: '#/components/schemas/BadRequestResponse'
-
-   # /savings/all:
-   #    get:
-   #       summary: 'Endpoint to fetch all published blog posts'
-   #       tags:
-   #          - blog
-   #       operationId: 'GetAllBlogPostsRequest'
-   #       parameters:  
-   #        - $ref: '#/components/parameters/Page'
-   #        - $ref: '#/components/parameters/Limit'
-   #        - $ref: '#/components/parameters/Sort'
-   #        - $ref: '#/components/parameters/Fields'
-   #        - $ref: '#/components/parameters/Search'
-   #       responses:
-   #          '200':
-   #             description: 'success'
-   #             content:
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/Pagination'
-   #          '400':
-   #             description: 'error'
-   #             content:
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/ErrorResponse'
-   
+      # patch:
+      #    summary: 'Endpoint to publish a blog post'
+      #    tags: 
+      #       - blog
+      #    operationId: 'PublishBlogRequest'
+      #    parameters:
+      #       - $ref: '#/components/parameters/AuthToken'
+      #       - $ref: '#/components/parameters/BlogId'
+      #    responses: 
+      #       '200':
+      #          description: 'success'
+      #          content: 
+      #             application/json:
+      #                schema: 
+      #                   $ref: '#/components/schemas/DefaultResponse'
+      #       '400': 
+      #          description: 'error'
+      #          content:
+      #             application/json:
+      #                schema:
+      #                   $ref: '#/components/schemas/BadRequestResponse'
+       
    # /savings/user:
    #    get:
    #       summary: 'Endpoint to get users blog posts'
@@ -373,7 +305,7 @@ components:
          required: true
 
       BudgetId:
-         name: 'blogId'
+         name: 'budgetId'
          in: path
          schema:
             type: string
@@ -491,50 +423,37 @@ components:
                type: boolean
             example: { success: 'true', message: 'BadErrorRequest', status: 200 }
 
-      BlogPost:
+      SavingsBalanceResponse:
          type: object
          properties:
-            title: 
-               type: string
-            content:
-               type: string
-            readingTime:
+            status: 
                type: number
-            state:
+            success:
                type: string
-            author:
+            message:
                type: string
-            comments:
-               type: array
+            data:
+               type: object
          example:
             {
-                  "title": "Ghana Anthem",
-                  "content": "God Bless Our Homeland Ghana. And Make our Nation Greate and Strong. Bold to defend forever, the cause of Freedom and of Right. Fill our hearts with true humility. Make us cherish fearless honesty. And help us to resist oppressors rule, with our our hearts and might forever more",
-                  "readingTime": 1,
-                  "state": "PUBLISHED",
-                  "author": {
-                     "name": "Justice",
-                     "id": "8acf3eb7-07a7-4f4f-8bb8-fc090b941c2f"
-                  },
-                  "comments": [],
-                  "createdAt": "2024-06-27T03:25:41.382Z",
-                  "updatedAt": "2024-06-27T03:26:13.908Z",
-                  "id": "6e74810e-b29f-4516-ade1-e385da8573d4"
+               "status": 200,
+               "success": true,
+               "message": "Savings balance fetched successfully",
+               "data": [
+                  {
+                     "amount": 2000,
+                     "id": "afd3ad7c-32b8-4273-87b6-7e23886d4d5b"
+                  }
+               ]
             }
 
-      BlogPostRequest:
+      TopUpRequest:
          type: object
          properties:
-            title: 
+            amount: 
                type: string
-            content:
-               type: string
-         required:
-            - title
-            - content
          example: {
-            "title": "Ghana Anthem",
-            "content": "God Bless Our Homeland Ghana. And Make our Nation Greate and Strong. Bold to defend forever, the cause of Freedom and of Right. Fill our hearts with true humility. Make us cherish fearless honesty. And help us to resist oppressors rule, with our our hearts and might forever more",
+            "amount": 2500
          }
 
       Pagination:
