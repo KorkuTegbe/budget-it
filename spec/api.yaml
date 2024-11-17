@@ -251,49 +251,49 @@ paths:
    #                      $ref: '#/components/schemas/BadRequestResponse'
 
    # /comment/:commentId/:blogId:
-      get:
-         summary: 'Endpoint to get a comment on a blog'
-         tags:
-            - comment
-         operationId: 'GetCommentRequest'
-         parameters:
-            - $ref: '#/components/parameters/BlogId'
-            - $ref: '#/components/parameters/CommentId'
-         responses:
-            '200':
-               description: 'success'
-               content:
-                  application/json:
-                     schema:
-                        $ref: '#/components/schemas/GetCommentResponse'
-            '400':
-               description: 'error'
-               content:
-                  application/json:
-                     schema:
-                        $ref: '#/components/schemas/BadRequestResponse'
+      # get:
+      #    summary: 'Endpoint to get a comment on a blog'
+      #    tags:
+      #       - comment
+      #    operationId: 'GetCommentRequest'
+      #    parameters:
+      #       - $ref: '#/components/parameters/BlogId'
+      #       - $ref: '#/components/parameters/CommentId'
+      #    responses:
+      #       '200':
+      #          description: 'success'
+      #          content:
+      #             application/json:
+      #                schema:
+      #                   $ref: '#/components/schemas/GetCommentResponse'
+      #       '400':
+      #          description: 'error'
+      #          content:
+      #             application/json:
+      #                schema:
+      #                   $ref: '#/components/schemas/BadRequestResponse'
 
-      delete: 
-         summary: 'Endpoint to delete a comment'
-         tags:
-            - comment
-         operationId: 'DeleteCommentRequest'
-         parameters:
-            - $ref: '#/components/parameters/BlogId'
-            - $ref: '#/components/parameters/CommentId'
-         responses:
-            '200':
-               description: 'success'
-               content:
-                  application/json:
-                     schema:
-                        $ref: '#/components/schemas/DefaultResponse'
-            '400':
-               description: 'error'
-               content:
-                  application/json:
-                     schema:
-                        $ref: '#/components/schemas/BadRequestResponse'
+      # delete: 
+      #    summary: 'Endpoint to delete a comment'
+      #    tags:
+      #       - comment
+      #    operationId: 'DeleteCommentRequest'
+      #    parameters:
+      #       - $ref: '#/components/parameters/BlogId'
+      #       - $ref: '#/components/parameters/CommentId'
+      #    responses:
+      #       '200':
+      #          description: 'success'
+      #          content:
+      #             application/json:
+      #                schema:
+      #                   $ref: '#/components/schemas/DefaultResponse'
+      #       '400':
+      #          description: 'error'
+      #          content:
+      #             application/json:
+      #                schema:
+      #                   $ref: '#/components/schemas/BadRequestResponse'
 
 components:
    parameters:
