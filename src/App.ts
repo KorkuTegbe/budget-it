@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '5mb', parameterLimit: 5 
 
 app.get('/', (req, res) => {
    res.json({
-      message: `thanks for visiting BLOGGEE. You should check the docs`
+      message: `thanks for visiting BUDGET IT. You should check the docs`
    })
 })
 
