@@ -1,0 +1,558 @@
+openapi: 3.0.0
+info:
+   title: Oyin's Budget It API Docs
+   version: 1.0.0
+   description: Endpoints documentation for the Budget It API 
+paths:
+   /auth/signup:
+      post:
+         summary: 'Endpoint for user to sign up'
+         tags:
+            - auth
+         operationId: SignupRequest
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/SignupRequest'
+            required: true
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/AuthResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+
+   /auth/login:
+      post:
+         summary: 'Endpoint for user to log in'
+         tags:
+            - auth
+         operationId: LoginRequest
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/LoginRequest'
+            required: true
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/AuthResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+
+   # /savings:
+   #    post:
+   #       summary: 'Endpoint to create a create post'
+   #       tags:
+   #          - savings
+   #       operationId: 'CreateBlogRequest'
+   #       parameters:
+   #          - $ref: '#/components/parameters/AuthToken'
+   #       requestBody: 
+   #          content:
+   #             application/json:
+   #                schema: 
+   #                   $ref: '#/components/schemas/BlogPostRequest'
+   #          required: true
+   #       responses:
+   #          '200':
+   #             description: 'success'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/DefaultResponse'
+   #          '400':
+   #             description: 'error'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/BadRequestResponse'
+      
+   # /savings/:blogId:
+   #    get:
+   #       summary: 'Endpoint to get a post by its ID'
+   #       tags:
+   #          - blog
+   #       operationId: 'GetBlogPostRequest'
+   #       parameters: 
+   #          - $ref: '#/components/parameters/BlogId'
+   #       responses: 
+   #          '200':
+   #             description: 'success'
+   #             content:
+   #                application/json:
+   #                   $ref: '#/components/schemas/BlogPost'
+   #          '400':
+   #             description: 'error'
+   #             content:
+   #                application/json:
+   #                   $ref: '#/components/schemas/BadRequestError'
+      
+   #    patch:
+   #       summary: 'Endpoint to publish a blog post'
+   #       tags: 
+   #          - blog
+   #       operationId: 'PublishBlogRequest'
+   #       parameters:
+   #          - $ref: '#/components/parameters/AuthToken'
+   #          - $ref: '#/components/parameters/BlogId'
+   #       responses: 
+   #          '200':
+   #             description: 'success'
+   #             content: 
+   #                application/json:
+   #                   schema: 
+   #                      $ref: '#/components/schemas/DefaultResponse'
+   #          '400': 
+   #             description: 'error'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/BadRequestResponse'
+      
+   #    put:
+   #       summary: 'Endpoint to edit a blog post'
+   #       tags: 
+   #          - blog
+   #       operationId: 'EditBlogPostRequest'
+   #       parameters:
+   #          - $ref: '#/components/parameters/AuthToken'
+   #          - $ref: '#/components/parameters/BlogId'
+   #       requestBody:
+   #          content:
+   #             application/json:
+   #                schema:
+   #                   $ref: '#/components/schemas/BlogPostRequest'
+   #       responses:
+   #          '200': 
+   #             description: 'success'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/DefaultResponse'
+      
+   #    delete:
+   #       summary: 'Endpoint to delete a blog post'
+   #       tags:
+   #          - blog
+   #       operationId: 'DeleteBlogPostRequest'
+   #       parameters:   
+   #          - $ref: '#/components/parameters/AuthToken'
+   #          - $ref: '#/components/parameters/BlogId'
+   #       responses:
+   #          '200': 
+   #             description: 'success'
+   #             content: 
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/DefaultResponse'
+   #          '400': 
+   #             description: 'error'
+   #             content: 
+   #                application/json:
+   #                   schema: 
+   #                      $ref: '#/components/schemas/BadRequestResponse'
+
+   # /savings/all:
+   #    get:
+   #       summary: 'Endpoint to fetch all published blog posts'
+   #       tags:
+   #          - blog
+   #       operationId: 'GetAllBlogPostsRequest'
+   #       parameters:  
+   #        - $ref: '#/components/parameters/Page'
+   #        - $ref: '#/components/parameters/Limit'
+   #        - $ref: '#/components/parameters/Sort'
+   #        - $ref: '#/components/parameters/Fields'
+   #        - $ref: '#/components/parameters/Search'
+   #       responses:
+   #          '200':
+   #             description: 'success'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/Pagination'
+   #          '400':
+   #             description: 'error'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/ErrorResponse'
+   
+   # /savings/user:
+   #    get:
+   #       summary: 'Endpoint to get users blog posts'
+   #       tags:
+   #          - blog
+   #       operationId: 'GetUsersBlogPosts'
+   #       parameters:
+   #          - $ref: '#/components/parameters/AuthToken'
+   #          - $ref: '#/components/parameters/Page'
+   #          - $ref: '#/components/parameters/Limit'
+   #          - $ref: '#/components/parameters/Sort'
+   #          - $ref: '#/components/parameters/Fields'
+   #          - $ref: '#/components/parameters/Search'
+   #       responses:
+   #          '200':
+   #             description: 'success'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/Pagination'
+   #          '400':
+   #             description: 'error'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/BadRequestError'
+
+   # /comment/:blogId:
+   #    post:
+   #       summary: 'Endpoint to leave a comment on a blog'
+   #       tags:
+   #          - comment
+   #       operationId: 'CreateCommentRequest'
+   #       parameters:
+   #          - $ref: '#/components/parameters/BlogId'
+   #       requestBody:
+   #          content:
+   #             application/json:
+   #                schema:
+   #                   $ref: '#/components/schemas/CommentRequest'
+   #          required: true
+   #       responses:
+   #          '200':
+   #             description: 'success'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/DefaultResponse'
+   #          '400':
+   #             description: 'error'
+   #             content:
+   #                application/json:
+   #                   schema:
+   #                      $ref: '#/components/schemas/BadRequestResponse'
+
+   # /comment/:commentId/:blogId:
+      get:
+         summary: 'Endpoint to get a comment on a blog'
+         tags:
+            - comment
+         operationId: 'GetCommentRequest'
+         parameters:
+            - $ref: '#/components/parameters/BlogId'
+            - $ref: '#/components/parameters/CommentId'
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/GetCommentResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/BadRequestResponse'
+
+      delete: 
+         summary: 'Endpoint to delete a comment'
+         tags:
+            - comment
+         operationId: 'DeleteCommentRequest'
+         parameters:
+            - $ref: '#/components/parameters/BlogId'
+            - $ref: '#/components/parameters/CommentId'
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/DefaultResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/BadRequestResponse'
+
+components:
+   parameters:
+      UserId:
+         name: 'userId'
+         in: path
+         schema:
+            type: string
+            format: uuid
+            pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+         required: true
+
+      AuthToken:
+         name: x-auth-token
+         in: header
+         schema:
+            type: string
+         required: true
+
+      Page:
+         name: page
+         in: query
+         schema:
+         type: number
+         minimum: 1
+         default: 1
+         required: false
+
+      Limit:
+         name: limit
+         description: This is the total number of elements returned
+         in: query
+         schema:
+         type: number
+         default: 20
+         minimum: 1
+         maximum: 30
+         required: false
+
+      Search:
+         name: search
+         description: search query for searching of documents.
+         in: query
+         schema:
+         type: string
+         maxLength: 100
+         minLength: 1
+         required: false
+
+      Sort:
+         name: sort
+         description: sort filter for sorting documents returned,e.g name ,createdAt, updatedAt etc.,
+         in: query
+         schema:
+         type: string
+         maxLength: 100
+         minLength: 1
+         required: false
+
+      Fields:
+         name: fields
+         description: Filter to select useful fields
+         in: query
+         schema:
+         type: string
+         maxLength: 100
+         minLength: 1
+         required: false
+
+      SavingId:
+         name: 'savingId'
+         in: path
+         schema:
+            type: string
+            format: uuid
+            pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+         required: true
+
+      BudgetId:
+         name: 'blogId'
+         in: path
+         schema:
+            type: string
+            format: uuid
+            pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+         required: true
+
+   responses:
+   
+   schemas:
+      SignupRequest:
+         additionalProperties: false
+         title: SignupRequest
+         example:
+            {
+               name: 'Korku',
+               email: 'kadepoju@gmail.com',
+               password: '1234abcd',
+            }
+         type: object
+         properties:
+            name:
+               type: string
+            password:
+               type: string
+            email:
+               type: string
+            telephoneNumber:
+               type: string
+            required:
+               - name
+               - password
+               - email
+
+      LoginRequest:
+         additionalProperties: false
+         title: LoginRequest
+         example: { email: 'kadepoju@gmail.com', password: '1234abcd' }
+         type: object
+         properties:
+            password:
+               type: string
+            email:
+               type: string
+            required:
+               - password
+               - email
+
+      TokenResponse:
+         type: object
+         properties:
+            token:
+               type: string
+
+      DefaultResponse:
+         title: DefaultResponse
+         type: object
+         properties:
+            success:
+               type: string
+            message:
+               type: string
+            status:
+               type: number
+         example:
+            { success: 'true', message: 'operation successful', status: 200 }
+
+      AuthResponse:
+         title: AuthResponse
+         type: object
+         properties:
+            success:
+               type: string
+            message:
+               type: string
+            status:
+               type: number
+            accessToken:
+               type: string
+         example:
+            {
+               success: 'true',
+               message: 'operation successful',
+               status: 200,
+               accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImttYW5AZ21haWwuY29tIiwidHlwZSI6Ik5FVyBVU0VSIiwiaWF0IjoxNzE5NDYxNjM0LCJleHAiOjE3MTk0NjUyMzR9.DX9BlJpy2p8s5dOe1XESaZPqqu4fv7nCio8Qxex5YiM',
+            }
+
+      ErrorResponse:
+         title: DefaultResponse
+         type: object
+         properties:
+            error:
+               type: string
+            message:
+               type: string
+         required:
+            - message
+         example: { 'message': 'Error' }
+
+      NotFoundResponse:
+         type: object
+         properties:
+         message:
+            type: string
+         example: { 'message': 'No resource found' }
+
+      BadRequestResponse:
+         type: object
+         properties:
+            message:
+               type: string
+            status: 
+               type: number
+            success: 
+               type: boolean
+            example: { success: 'true', message: 'BadErrorRequest', status: 200 }
+
+      BlogPost:
+         type: object
+         properties:
+            title: 
+               type: string
+            content:
+               type: string
+            readingTime:
+               type: number
+            state:
+               type: string
+            author:
+               type: string
+            comments:
+               type: array
+         example:
+            {
+                  "title": "Ghana Anthem",
+                  "content": "God Bless Our Homeland Ghana. And Make our Nation Greate and Strong. Bold to defend forever, the cause of Freedom and of Right. Fill our hearts with true humility. Make us cherish fearless honesty. And help us to resist oppressors rule, with our our hearts and might forever more",
+                  "readingTime": 1,
+                  "state": "PUBLISHED",
+                  "author": {
+                     "name": "Justice",
+                     "id": "8acf3eb7-07a7-4f4f-8bb8-fc090b941c2f"
+                  },
+                  "comments": [],
+                  "createdAt": "2024-06-27T03:25:41.382Z",
+                  "updatedAt": "2024-06-27T03:26:13.908Z",
+                  "id": "6e74810e-b29f-4516-ade1-e385da8573d4"
+            }
+
+      BlogPostRequest:
+         type: object
+         properties:
+            title: 
+               type: string
+            content:
+               type: string
+         required:
+            - title
+            - content
+         example: {
+            "title": "Ghana Anthem",
+            "content": "God Bless Our Homeland Ghana. And Make our Nation Greate and Strong. Bold to defend forever, the cause of Freedom and of Right. Fill our hearts with true humility. Make us cherish fearless honesty. And help us to resist oppressors rule, with our our hearts and might forever more",
+         }
+
+      Pagination:
+         type: object
+         example:
+            {
+               'page': 1,
+               'size': 50,
+               'lastPage': 5,
+               'totalCount': 241,
+               'data': [],
+            }
+         properties:
+            page:
+               type: integer
+            size:
+               type: integer
+            lastPage:
+               type: integer
+            totalCount:
+               type: integer
