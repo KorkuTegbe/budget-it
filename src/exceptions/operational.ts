@@ -41,6 +41,13 @@ export class ServiceUnavailableError extends CustomError {
        this.name = 'ServiceUnavailableError';
     }
 }
+
+export class DuplicateError extends CustomError {
+    constructor(msg?: string) {
+       super(msg || 'Duplicate Error', 503);
+       this.name = 'DuplicateError';
+    }
+}
  
 export class NotFoundError extends CustomError {
     constructor(msg?: string) {

@@ -1,13 +1,12 @@
 import { Request, Response } from 'express' 
 import { SignupLinkRequest, LoginRequest,  } from "../interfaces";
 import { loginUser, signUpUser } from '../services';
-import { BadRequestError } from '../exceptions';
 
 export const HandleSignUp = async (req: Request, res: Response) => {
     try{
-        const { name, email, password } = <SignupLinkRequest>req.body
+        const { firstName, lastName, phoneNumber, pin, email, password } = <SignupLinkRequest>req.body
 
-        const response = await signUpUser({ name, email, password, })
+        const response = await signUpUser({ firstName, lastName, phoneNumber, email, pin, password })
         
         return res.status(200).json(response);
         
@@ -18,9 +17,9 @@ export const HandleSignUp = async (req: Request, res: Response) => {
 
 export const HandleLogin = async (req: Request, res: Response) => {
     try{
-        const { email, password } = <LoginRequest>req.body
+        const { accountNumber, password } = <LoginRequest>req.body
 
-        const response = await loginUser({ email, password })
+        const response = await loginUser({ accountNumber, password })
         
         return res.status(200).json(response);
         

@@ -22,7 +22,7 @@ paths:
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/AuthResponse'
+                        $ref: '#/components/schemas/SignUpResponse'
             '400':
                description: 'error'
                content:
@@ -321,29 +321,39 @@ components:
          title: SignupRequest
          example:
             {
-               name: 'Korku',
-               email: 'kadepoju@gmail.com',
-               password: '1234abcd',
+               "firstName": "King",
+               "lastName": "Paluta",
+               "phoneNumber": "08005444245",
+               "email": "paluta@gmail.com",
+               "password": "KorkuIs1",
+               "pin": 4321
             }
          type: object
          properties:
-            name:
+            firstName:
+               type: string
+            lastName: 
                type: string
             password:
                type: string
             email:
                type: string
-            telephoneNumber:
+            phoneNumber:
                type: string
+            pin: 
+               type: number
             required:
-               - name
-               - password
+               - firstName
+               - lastName
                - email
+               - password
+               - phoneNumber
+               - pin
 
       LoginRequest:
          additionalProperties: false
          title: LoginRequest
-         example: { email: 'kadepoju@gmail.com', password: '1234abcd' }
+         example: { accountNumber: '8005444245', password: '1234abcd' }
          type: object
          properties:
             password:
@@ -475,3 +485,31 @@ components:
                type: integer
             totalCount:
                type: integer
+
+      SignUpResponse:
+         title: AuthResponse
+         type: object
+         properties:
+            success:
+               type: string
+            message:
+               type: string
+            status:
+               type: number
+            data:
+               type: object
+         example:
+            {
+               success: 'true',
+               message: 'operation successful',
+               status: 200,
+               data: {
+                     "user": {
+                        "accountNumber": "8005444245",
+                        "username": "kingpaluta_7195"
+                     },
+                     accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImttYW5AZ21haWwuY29tIiwidHlwZSI6Ik5FVyBVU0VSIiwiaWF0IjoxNzE5NDYxNjM0LCJleHAiOjE3MTk0NjUyMzR9.DX9BlJpy2p8s5dOe1XESaZPqqu4fv7nCio8Qxex5YiM'
+                  },
+               }
+            
+

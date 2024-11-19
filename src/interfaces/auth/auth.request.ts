@@ -1,7 +1,10 @@
 export interface SignupLinkRequest {
     email: string;
     password: string;
-    name: string;
+    firstName: string;
+    lastName: string,
+    phoneNumber: string,
+    pin: number
 }
   
 export interface SignUpTokenRequest{
@@ -12,7 +15,8 @@ export interface SignUpTokenRequest{
 }
 
 export interface LoginRequest {
-    email: string;
+    email?: string;
+    accountNumber: string;
     password: string;
 }
 

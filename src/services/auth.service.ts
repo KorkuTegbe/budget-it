@@ -1,29 +1,33 @@
 import * as bcrypt from 'bcrypt';
-import { BadRequestError, ForbiddenError, UnAuthorizedError, InternalServiceError } from "../exceptions";
+import { BadRequestError, DuplicateError, ForbiddenError, UnAuthorizedError, InternalServiceError } from "../exceptions";
 import { SavingsDb, userDb, } from "../database";
 import { IService, IUser, LoginRequest, SignupLinkRequest } from "../interfaces";
-import { JwtHelperClass, JwtType } from "../helpers/jwt.helper";
+import { JwtHelperClass, JwtType, } from "../helpers/jwt.helper";
+import { generateAccountNumber, generateUsername } from '../helpers';
 
 export const signUpUser =async (body: SignupLinkRequest): Promise<IService> => {
     try{
-        const { name, email, password } = body;
+        const { firstName, lastName, email, phoneNumber, pin, password } = body;
 
         const existingUser = await userDb.findOne({email})
 
         if (existingUser) {
-            throw new BadRequestError('Email is already in use')
+            throw new DuplicateError('Email is already in use')
         }
 
+        const accountNumber = await generateAccountNumber(phoneNumber)
+        const username = await generateUsername(firstName, lastName)
+
         const user = await userDb.create({
-            name, email, password
+            firstName, lastName, email, password, pin, phoneNumber, accountNumber, username
         })
 
         const token = JwtHelperClass.generateToken({
-            userId: user._id, email, type: JwtType.NEW_USER
+            userId: user._id, email, type: JwtType.USER
         })
 
-        const savingsAccount = await SavingsDb.create({
-            amount: 2000,
+        await SavingsDb.create({
+            amount: 0,
             user
         })
 
@@ -31,7 +35,7 @@ export const signUpUser =async (body: SignupLinkRequest): Promise<IService> => {
             status: 201,
             success: true,
             message: 'Signup successful',
-            data: { token }
+            data: { user: { accountNumber: user.accountNumber, username: user.username}, token }
         }
     }catch(error: any){
         return {
@@ -44,15 +48,17 @@ export const signUpUser =async (body: SignupLinkRequest): Promise<IService> => {
 
 export const loginUser = async (body: LoginRequest): Promise<IService | any > => {
     try{
-        const { email, password } = body
-        if(!(email && password)){
+        const { accountNumber, password } = body
+        if(!(accountNumber && password)){
             throw new BadRequestError('Fields cannot be empty')
         }
-        const user: IUser | any = await userDb.findOne({ email }); 
+        const user: IUser | any = await userDb.findOne({ accountNumber }); 
         
         if (!user) {
             throw new BadRequestError('User not found!')
         }
+
+        const email = user.email;
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         

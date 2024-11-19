@@ -12,12 +12,27 @@ const UserSchema = new Schema<IUser>({
             return uuidv4()
         }
     }, 
-    name: {
+    firstName: {
         type: String,
         required: true
     },
+    lastName: {
+        type: String,
+        required: true
+    },
+    phoneNumber: {
+        type: String,
+        required: true,
+        unique: true
+    },
     username: {
         type: String,
+        unique: true,
+        required: false
+    },
+    accountNumber: {
+        type: String,
+        unique: true
     },
     email: {
         type: String,
@@ -29,6 +44,10 @@ const UserSchema = new Schema<IUser>({
         type: String,
         required: true,
     },
+    pin: {
+        type: Number,
+        required: true,
+    }
 },{
     toObject: {
        virtuals: true,
@@ -70,6 +89,5 @@ UserSchema.methods.isValidPassword = async function (password: string) {
         throw new Error(error.message);
     }
 }
-
 
 export const userDb = mongoose.model<IUser>(config.mongodb.collections.users, UserSchema)
