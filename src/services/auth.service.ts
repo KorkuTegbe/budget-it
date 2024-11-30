@@ -71,7 +71,19 @@ export const loginUser = async (body: LoginRequest): Promise<IService | any > =>
                 status: 200,
                 success: true,
                 message: 'Login successful',
-                data: {token}
+                data: { 
+                    user: { 
+                        accountNumber: user.accountNumber, 
+                        username: user.username
+                    }, 
+                    token
+                }
+            }
+        } else {
+            return {
+                status: 200,
+                success: true,
+                message: 'Incorrect Login Credentials',
             }
         }
                  

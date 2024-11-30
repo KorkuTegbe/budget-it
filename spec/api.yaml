@@ -48,7 +48,7 @@ paths:
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/AuthResponse'
+                        $ref: '#/components/schemas/SignUpResponse'
             '400':
                description: 'error'
                content:
