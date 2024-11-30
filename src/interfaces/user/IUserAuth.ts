@@ -6,3 +6,19 @@ export interface IUserAuthToken extends Document {
    token: string;
    user: string;
 }
+
+export interface IUsernameChangeRequest {
+   username: string;
+   pin: string
+}
+
+export interface IPasswordChangeBody {
+   oldPassword: string,
+   newPassword: string,
+   pin: string
+}
+
+export interface IChangePin {
+   oldPin: string
+   newPin: string
+}

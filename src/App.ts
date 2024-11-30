@@ -6,7 +6,7 @@ import * as swagger from 'swagger-ui-express';
 import rateLimit from 'express-rate-limit';
 import { swaggerSpec } from './configuration/';
 import { AppErrorHandler } from './exceptions';
-import { AuthRouter, BudgetRouter, SavingsRouter,  } from './routers';
+import { AuthRouter, BudgetRouter, SavingsRouter, UserRouter } from './routers';
 
 const app = express();
 
@@ -45,6 +45,7 @@ app.use('/docs', swagger.serve, swagger.setup(swaggerSpec));
 app.use(AuthRouter);
 app.use(BudgetRouter);
 app.use(SavingsRouter);
+app.use(UserRouter);
 
 
 /**eGlobal error handler */

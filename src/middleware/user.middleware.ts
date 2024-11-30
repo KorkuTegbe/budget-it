@@ -6,7 +6,7 @@ import { JwtHelperClass } from '../helpers/jwt.helper';
 import { IUser } from '../interfaces';
 
 
-export const RequireAuth = async (req: any, res: Response, next: NextFunction) => {
+export const RequireAuth = async (req: any, res: Response, next: NextFunction): Promise<any> => {
     try {
         const accessToken = <string>req.headers['x-auth-token'];
         if(!accessToken){
