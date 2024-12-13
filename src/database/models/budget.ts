@@ -14,7 +14,7 @@ const BudgetSchema = new Schema<IBudget>({
     },
     name: { 
         type: String, 
-        required: true,
+        required: false,
     },
 
     description: {
@@ -25,16 +25,24 @@ const BudgetSchema = new Schema<IBudget>({
         type: Number
     },
 
-    type: {
+    category: {
         type: String,
-        enum: Object.values(BudgetType),
-        default: BudgetType.day
+        // enum: Object.values(BudgetType),
+        // default: BudgetType
     },
     
     user: {
         type: String,
         ref: config.mongodb.collections.users,
         required: true
+    },
+    
+    frequency: {
+        type: Number,
+    },
+
+    duration: {
+        type: Number
     }
 }, {
     toObject: {

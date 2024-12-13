@@ -1,11 +1,13 @@
 import { Document } from 'mongoose'
 
-export enum BudgetType {
-    "day" = 'DAY',
-    "weekly" = 'WEEKLY',
-    "monthly" = 'MONTHLY',
-    "celebration" = "CELEBRATION"
-}
+// export enum BudgetType {
+//     day = 'DAY',
+//     weekly = 'WEEKLY',
+//     monthly = 'MONTHLY',
+//     celebration = "CELEBRATION"
+// }
+
+export type BudgetType = "DAY" | "WEEKLY" | "MONTHLY" | "CELEBRATION"
 
 export interface IBudget extends Document {
     _id: string;
@@ -13,8 +15,9 @@ export interface IBudget extends Document {
     description: string;
     duration: number;
     amount: number,
-    type: BudgetType;
+    category: BudgetType;
     user: string;
     createdAt: Date;
     updatedAt: Date;
+    frequency: number
 }

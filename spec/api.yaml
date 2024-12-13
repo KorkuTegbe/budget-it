@@ -162,7 +162,6 @@ paths:
                      schema:
                         $ref: '#/components/schemas/ErrorResponse'
 
-
    /savings:
       get:
          summary: 'Endpoint to get savings balance'
@@ -261,33 +260,103 @@ paths:
    #                   schema:
    #                      $ref: '#/components/schemas/BadRequestError'
 
-   # /comment/:blogId:
-   #    post:
-   #       summary: 'Endpoint to leave a comment on a blog'
+   /budgets:
+      post:
+         summary: 'Endpoint to create a budget'
+         tags:
+            - budgets
+         operationId: 'CreateBudgetRequest'
+         parameters:
+            - $ref: '#/components/parameters/AuthToken'
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/CreateBudgetRequest'
+            required: true
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/DefaultResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/BadRequestResponse'
+      get:
+         summary: "Endpoint to get a user's budgets"
+         tags:
+            - budgets
+         operationId: "GetUserBudgets"
+         parameters:
+            - $ref: "#/components/parameters/AuthToken"
+            - $ref: "#/components/parameters/Page"
+            - $ref: "#/components/parameters/Sort"
+            - $ref: "#/components/parameters/Limit"
+            - $ref: "#/components/parameters/Fields"
+            - $ref: "#/components/parameters/Search"
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/Pagination'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/BadRequestResponse'
+
+   /budgets/{budgetId}:
+      get:
+         summary: 'Endpoint to fetch user details'
+         tags:
+            - budgets
+         operationId: GetBudgetRequest
+         parameters:
+            - $ref: '#/components/parameters/AuthToken'
+            - $ref: '#/components/parameters/BudgetId'
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/GetBudgetResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+
+   # /budgets/{BudgetId}:
+   #    get:
+   #       summary: 'Endpoint to get a budget'
    #       tags:
-   #          - comment
-   #       operationId: 'CreateCommentRequest'
+   #          - user
+   #       operationId: GetUserDetailsRequest
    #       parameters:
-   #          - $ref: '#/components/parameters/BlogId'
-   #       requestBody:
-   #          content:
-   #             application/json:
-   #                schema:
-   #                   $ref: '#/components/schemas/CommentRequest'
-   #          required: true
+   #          - $ref: '#/components/parameters/AuthToken'
    #       responses:
    #          '200':
    #             description: 'success'
    #             content:
    #                application/json:
    #                   schema:
-   #                      $ref: '#/components/schemas/DefaultResponse'
+   #                      $ref: '#/components/schemas/UserDetailsResponse'
    #          '400':
    #             description: 'error'
    #             content:
    #                application/json:
    #                   schema:
-   #                      $ref: '#/components/schemas/BadRequestResponse'
+   #                      $ref: '#/components/schemas/ErrorResponse'
 
    # /comment/:commentId/:blogId:
       # get:
@@ -403,7 +472,7 @@ components:
          required: false
 
       SavingId:
-         name: 'savingId'
+         name: "savingId"
          in: path
          schema:
             type: string
@@ -412,7 +481,7 @@ components:
          required: true
 
       BudgetId:
-         name: 'budgetId'
+         name: "budgetId"
          in: path
          schema:
             type: string
@@ -693,4 +762,50 @@ components:
                }
             }
                
-            
+      GetBudgetResponse: 
+         type: object
+         properties:
+            status: 
+               type: number
+            success:
+               type: string
+            message:
+               type: string
+            data:
+               type: object
+         example:
+            {
+               "status": 200,
+               "success": true,
+               "message": "Budgets fetched successful",
+               "data": {
+                  "name": "New year's budget",
+                  "description": "this be my budget for the new year",
+                  "amount": 2000,
+                  "type": "CELEBRATION",
+                  "user": "e39cf062-8bf3-41ac-bed6-0e85c28b37b0",
+                  "createdAt": "2024-12-09T23:33:10.969Z",
+                  "updatedAt": "2024-12-09T23:33:10.969Z",
+                  "id": "6e38f290-6ea9-4592-9cd2-30c1e8ad8433"
+               }
+            }
+
+      CreateBudgetRequest:
+         additionalProperties: false
+         title: CreateBudgetRequest
+         example: { amount: '2000', category: 'WEEKLY', frequency: '3', pin: "1234" }
+         type: object
+         properties:
+            amount:
+               type: string
+            category:
+               type: string
+            frequency: 
+               type: string
+            pin:
+               type: string
+            required:
+               - amount
+               - category
+               - frequency
+               - pin
