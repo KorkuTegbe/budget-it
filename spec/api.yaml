@@ -184,13 +184,14 @@ paths:
                      schema:
                         $ref: '#/components/schemas/BadRequestResponse'
       
-   /savings/:savingId:
+   /savings/{savingId}:
       post:
          summary: 'Endpoint to top up savings balance'
          tags:
             - savings
          operationId: 'TopUpSavingsRequest'
          parameters: 
+            - $ref: '#/components/parameters/AuthToken'
             - $ref: '#/components/parameters/SavingId'
          requestBody:
             content:
@@ -209,7 +210,7 @@ paths:
                description: 'error'
                content:
                   application/json:
-                     $ref: '#/components/schemas/BadRequestError'
+                     $ref: '#/components/schemas/BadRequestResponse'
       
       # patch:
       #    summary: 'Endpoint to publish a blog post'
@@ -315,7 +316,7 @@ paths:
 
    /budgets/{budgetId}:
       get:
-         summary: 'Endpoint to fetch user details'
+         summary: 'Endpoint to transfer funds from budget to another user'
          tags:
             - budgets
          operationId: GetBudgetRequest
@@ -336,27 +337,33 @@ paths:
                      schema:
                         $ref: '#/components/schemas/ErrorResponse'
 
-   # /budgets/{BudgetId}:
-   #    get:
-   #       summary: 'Endpoint to get a budget'
-   #       tags:
-   #          - user
-   #       operationId: GetUserDetailsRequest
-   #       parameters:
-   #          - $ref: '#/components/parameters/AuthToken'
-   #       responses:
-   #          '200':
-   #             description: 'success'
-   #             content:
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/UserDetailsResponse'
-   #          '400':
-   #             description: 'error'
-   #             content:
-   #                application/json:
-   #                   schema:
-   #                      $ref: '#/components/schemas/ErrorResponse'
+   /budgets/{budgetId}/transfer:
+      post:
+         summary: 'Endpoint to transfer funds to a user by username'
+         tags:
+            - budgets
+         operationId: TransferFundsToUsername
+         parameters:
+            - $ref: '#/components/parameters/AuthToken'
+            - $ref: '#/components/parameters/BudgetId'
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/TransferToUsernameRequest' #got here
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/UserDetailsResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/ErrorResponse'
 
    # /comment/:commentId/:blogId:
       # get:
@@ -809,3 +816,16 @@ components:
                - category
                - frequency
                - pin
+
+      TransferToUsernameRequest:
+         title: TransferToUsernameRequest
+         example: { amount: 200, username: 'the_king_paluta'}
+         type: object
+         properties:    
+            amount:
+               type: number
+            username: 
+               type: string
+            required:
+               - username
+               - amount

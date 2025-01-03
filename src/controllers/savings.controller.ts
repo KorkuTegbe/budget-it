@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { checkSavingsBalance, topUpBalance, transfer } from "../services";
+import { checkSavingsBalance, topUpBalance, } from "../services";
 
 
 
@@ -25,21 +25,6 @@ export const HandleTopUpBalance = async (req: Request, res: Response) => {
       const { amount } = req.body;
 
       const response = await topUpBalance(userId, id, amount)
-
-      return res.status(200).json(response);
-       
-   }catch(err: any){
-      return res.json(err.message)
-   }    
-}
-
-export const HandleTransfer = async (req: Request, res: Response) => {
-   try{
-      // @ts-ignore 
-      const { id } = req.params;
-      const { amount } = req.body
-
-      const response = await transfer()
 
       return res.status(200).json(response);
        

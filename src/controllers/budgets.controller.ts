@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createBudget, getABudget, getBudgets} from "../services"; //
+import { createBudget, getABudget, getBudgets, transferToUsername} from "../services"; //
 
 
 export const HandleCreateBudget = async (req: any, res: Response) => {
@@ -37,6 +37,19 @@ export const HandleGetBudgets = async (req: any, res: Response) => {
 
       const response = await getBudgets(userId, {search, sortBy, sortOrder, page, limit})
       
+      return res.status(200).json(response)
+   } catch (error: any) {
+      return res.json(error.message)
+   }
+}
+
+export const HandleTransferToUsername = async (req: any, res: Response) => {
+   try {
+      const userId = req.user.id;
+      const budgetId = req.params.id  
+      const { amount, username } = req.body;
+
+      const response = await transferToUsername(budgetId, amount, username);
       return res.status(200).json(response)
    } catch (error: any) {
       return res.json(error.message)

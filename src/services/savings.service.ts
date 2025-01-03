@@ -38,9 +38,8 @@ export const topUpBalance = async (userId: string, savingsId: string, amount: nu
          throw new NotFoundError(`Savings account with id ${savingsId} does not exist`)
       }
 
-      savings.amount += amount ;
-
-      savings.save();
+      savings.amount += amount;
+      await savings.save();
 
       return {
          status: 200,
@@ -50,27 +49,9 @@ export const topUpBalance = async (userId: string, savingsId: string, amount: nu
    }catch(error: any){
       console.log(error)
       return {
-         status: 500,
+         status: error.statusCode,
          success: false,
          message: error.message
       };
    } 
-}
-
-export const transfer = async (): Promise<IService> => {
-   try {
-
-      return {
-         status: 200,
-         success: true,
-         message: 'Savings balance topup successful'
-      }
-   } catch (error: any) {
-      console.log(error)
-      return {
-         status: 500,
-         success: false,
-         message: error.message
-      };
-   }
 }

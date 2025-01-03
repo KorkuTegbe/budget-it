@@ -24,6 +24,19 @@ export const createBudget = async (amount: string, category: BudgetType, frequen
          duration = 5
       }
 
+      const savings = await SavingsDb.findOne({
+         user: userId
+      });
+      // @ts-ignore
+      if (savings?.amount <= parsedAmount) {
+         throw new BadRequestError("Insufficient funds!")
+      }
+
+      // deduct from savings balance
+      // @ts-ignore
+      savings?.amount -= parsedAmount;
+      await savings?.save();
+
       const budget = new BudgetDb({
          amount: parsedAmount,
          category: category.toUpperCase(),
@@ -129,5 +142,48 @@ export const getBudgets = async (userId: string,
 };
 
 
+export const transferToUsername = async (budgetId: string, amount: number, username: string): Promise<IService> => {
+   try {
+      const budget = await BudgetDb.findById(budgetId)
 
+      if (!budget) {
+         throw new BadRequestError("Bad Request")
+      }
+
+      const recipient = await userDb.findOne({
+         username
+      });
+
+      if (!recipient) {
+         throw new NotFoundError(`User with username ${username} not found.`)
+      }
+
+      // check if budget balance is enough
+      if (budget.amount <= amount) {
+         throw new BadRequestError("Insufficient balance to transfer")
+      }
+
+      // debit sender and credit recipient
+      budget.amount -= amount;
+      await budget.save()
+      // sender's savings
+      let userSavings = await SavingsDb.findOne({ user: recipient._id }).select('amount');
+      // @ts-ignore
+      userSavings?.amount += amount;
+      await userSavings?.save()
+      
+      return {
+         status: 200,
+         success: true,
+         message: `Transfer of funds to ${username} successful`
+      }
+   } catch (error: any) {
+      console.log(error)
+      return {
+         status: 500,
+         success: false,
+         message: error.message
+      };
+   }
+}
 
