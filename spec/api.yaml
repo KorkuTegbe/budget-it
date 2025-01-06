@@ -819,13 +819,16 @@ components:
 
       TransferToUsernameRequest:
          title: TransferToUsernameRequest
-         example: { amount: 200, username: 'the_king_paluta'}
+         example: { amount: 200, username: 'the_king_paluta', pin: '4321'}
          type: object
          properties:    
             amount:
                type: number
             username: 
                type: string
+            pin: 
+               type: string
             required:
                - username
                - amount
+               - pin

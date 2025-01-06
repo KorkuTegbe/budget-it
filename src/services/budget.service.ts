@@ -142,8 +142,10 @@ export const getBudgets = async (userId: string,
 };
 
 
-export const transferToUsername = async (budgetId: string, amount: number, username: string): Promise<IService> => {
+export const transferToUsername = async (userId: string, budgetId: string, amount: number, pin: string, username: string): Promise<IService> => {
    try {
+      const user = await userDb.findById(userId)
+
       const budget = await BudgetDb.findById(budgetId)
 
       if (!budget) {
@@ -163,6 +165,11 @@ export const transferToUsername = async (budgetId: string, amount: number, usern
          throw new BadRequestError("Insufficient balance to transfer")
       }
 
+      // check pin
+      if (user?.pin !== Number(pin)) {
+         throw new BadRequestError("Incorrect Pin")
+      }
+
       // debit sender and credit recipient
       budget.amount -= amount;
       await budget.save()
@@ -171,7 +178,7 @@ export const transferToUsername = async (budgetId: string, amount: number, usern
       // @ts-ignore
       userSavings?.amount += amount;
       await userSavings?.save()
-      
+
       return {
          status: 200,
          success: true,

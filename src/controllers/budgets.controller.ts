@@ -47,9 +47,9 @@ export const HandleTransferToUsername = async (req: any, res: Response) => {
    try {
       const userId = req.user.id;
       const budgetId = req.params.id  
-      const { amount, username } = req.body;
+      const { amount, username, pin } = req.body;
 
-      const response = await transferToUsername(budgetId, amount, username);
+      const response = await transferToUsername(userId, budgetId, amount, pin, username);
       return res.status(200).json(response)
    } catch (error: any) {
       return res.json(error.message)
