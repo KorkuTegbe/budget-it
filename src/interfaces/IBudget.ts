@@ -20,4 +20,5 @@ export interface IBudget extends Document {
     createdAt: Date;
     updatedAt: Date;
     frequency: number
+    deleteAt: Date
 }

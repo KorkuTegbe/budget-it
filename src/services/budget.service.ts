@@ -69,7 +69,12 @@ export const createBudget = async (amount: string, category: BudgetType, frequen
 
 export const getABudget = async (userId: string, id: string): Promise<IService> => {
    try {
-      const budget = await BudgetDb.findOne({_id: id, user: userId})
+      const now = new Date();
+
+      // Delete the budget if it's expired
+      await BudgetDb.deleteMany({ _id: id, deleteAt: { $lte: now } });
+
+      const budget = await BudgetDb.findOne({_id: id, user: userId, deleteAt: { $gt: now }})
 
       if (!budget) {
          throw new NotFoundError(`Budget with ID: ${id} not found`)
@@ -101,9 +106,15 @@ export const getBudgets = async (userId: string,
    }
 ): Promise<IService> => {
    try {
+      const now = new Date()
+
+      // Delete expired budgets before returning active ones
+      await BudgetDb.deleteMany({ deleteAt: { $lte: now } });
+
+
       const { search, sortBy = 'createdAt', sortOrder = 'DESC', page = 1, limit = 10 } = query;
 
-      const filter: any = { user: userId };
+      const filter: any = { user: userId, deleteAt: { $gt: now } };
 
       // Calculate pagination values
       const skip = (page - 1) * limit;

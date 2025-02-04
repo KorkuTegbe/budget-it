@@ -43,7 +43,9 @@ const BudgetSchema = new Schema<IBudget>({
 
     duration: {
         type: Number
-    }
+    },
+
+    deleteAt: { type: Date }
 }, {
     toObject: {
        virtuals: true,
@@ -64,5 +66,14 @@ const BudgetSchema = new Schema<IBudget>({
     timestamps: true,
     versionKey: false
 })
+
+
+BudgetSchema.pre("save", function (next) {
+    if (!this.deleteAt) {
+        this.deleteAt = new Date();
+        this.deleteAt.setDate(this.deleteAt.getDate() + (this.duration || 7)); // Default 7 days if no duration
+    }
+    next();
+});
 
 export const BudgetDb = mongoose.model<IBudget>(config.mongodb.collections.budgets, BudgetSchema)
