@@ -27,8 +27,8 @@ const BudgetSchema = new Schema<IBudget>({
 
     category: {
         type: String,
-        // enum: Object.values(BudgetType),
-        // default: BudgetType
+        enum: Object.values(BudgetType),
+        default: BudgetType.monthly
     },
     
     user: {
@@ -39,10 +39,12 @@ const BudgetSchema = new Schema<IBudget>({
     
     frequency: {
         type: Number,
+        default: 1
     },
 
     duration: {
-        type: Number
+        type: Number,
+        default: 30
     },
 
     deleteAt: { type: Date }

@@ -365,50 +365,81 @@ paths:
                      schema:
                         $ref: '#/components/schemas/ErrorResponse'
 
-   # /comment/:commentId/:blogId:
-      # get:
-      #    summary: 'Endpoint to get a comment on a blog'
-      #    tags:
-      #       - comment
-      #    operationId: 'GetCommentRequest'
-      #    parameters:
-      #       - $ref: '#/components/parameters/BlogId'
-      #       - $ref: '#/components/parameters/CommentId'
-      #    responses:
-      #       '200':
-      #          description: 'success'
-      #          content:
-      #             application/json:
-      #                schema:
-      #                   $ref: '#/components/schemas/GetCommentResponse'
-      #       '400':
-      #          description: 'error'
-      #          content:
-      #             application/json:
-      #                schema:
-      #                   $ref: '#/components/schemas/BadRequestResponse'
+   /spending:
+      post:
+         summary: 'Endpoint to create a transaction'
+         tags:
+            - transactions
+         operationId: 'CreateSpendingRequest'
+         parameters:
+            - $ref: '#/components/parameters/AuthToken'
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/CreateSpendingRequest'
+            required: true
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/DefaultResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/BadRequestResponse'
+      get:
+         summary: "Endpoint to get a user's spending transactions"
+         tags:
+            - transactions
+         operationId: "GetUserTransactions"
+         parameters:
+            - $ref: "#/components/parameters/AuthToken"
+            - $ref: "#/components/parameters/Page"
+            - $ref: "#/components/parameters/Sort"
+            - $ref: "#/components/parameters/Limit"
+            - $ref: "#/components/parameters/Fields"
+            - $ref: "#/components/parameters/Search"
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/Pagination'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/BadRequestResponse'
 
-      # delete: 
-      #    summary: 'Endpoint to delete a comment'
-      #    tags:
-      #       - comment
-      #    operationId: 'DeleteCommentRequest'
-      #    parameters:
-      #       - $ref: '#/components/parameters/BlogId'
-      #       - $ref: '#/components/parameters/CommentId'
-      #    responses:
-      #       '200':
-      #          description: 'success'
-      #          content:
-      #             application/json:
-      #                schema:
-      #                   $ref: '#/components/schemas/DefaultResponse'
-      #       '400':
-      #          description: 'error'
-      #          content:
-      #             application/json:
-      #                schema:
-      #                   $ref: '#/components/schemas/BadRequestResponse'
+   /spending/{spendingId}:
+      get:
+         summary: 'Endpoint to get transaction details of a single spend'
+         tags:
+            - transactions
+         operationId: GetSpendingRequest
+         parameters:
+            - $ref: '#/components/parameters/AuthToken'
+            - $ref: '#/components/parameters/SpendingId'
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/GetSpendingResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/ErrorResponse'
 
 components:
    parameters:
@@ -489,6 +520,15 @@ components:
 
       BudgetId:
          name: "budgetId"
+         in: path
+         schema:
+            type: string
+            format: uuid
+            pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+         required: true
+
+      SpendingId:
+         name: "spendingId"
          in: path
          schema:
             type: string
@@ -800,7 +840,7 @@ components:
       CreateBudgetRequest:
          additionalProperties: false
          title: CreateBudgetRequest
-         example: { amount: '2000', category: 'WEEKLY', frequency: '3', pin: "1234" }
+         example: { amount: '2000', category: 'MONTHLY', frequency: '3', pin: "1234" }
          type: object
          properties:
             amount:
@@ -832,3 +872,53 @@ components:
                - username
                - amount
                - pin
+
+      CreateSpendingRequest:
+         additionalProperties: false
+         title: CreateBudgetRequest
+         example: { amount: '2000', category: 'BILLS', description: 'Data purchase', budgetId: 'b40bab69-1e4a-46f8-950a-d22f47801375', pin: "1234" }
+         type: object
+         properties:
+            amount:
+               type: string
+            category:
+               type: string
+            description: 
+               type: string
+            budgetId: 
+               type: string
+            pin:
+               type: string
+            required:
+               - amount
+               - category
+               - pin
+               - budgetId
+
+      GetSpendingResponse: 
+         type: object
+         properties:
+            status: 
+               type: number
+            success:
+               type: string
+            message:
+               type: string
+            data:
+               type: object
+         example:
+            {
+               "status": 200,
+               "success": true,
+               "message": "Budget fetched successfully",
+               "data": {
+                  "category": "FOOD",
+                  "description": "Bolt food order",
+                  "amount": 150,
+                  "sourceBudget": "b40bab69-1e4a-46f8-950a-d22f47801375",
+                  "user": "298d7a1c-ce15-4bcc-a63e-8135df37b69a",
+                  "createdAt": "2025-02-10T00:09:15.872Z",
+                  "updatedAt": "2025-02-10T00:09:15.872Z",
+                  "id": "ee5bd0a5-4143-4513-ac3f-5cc2833a8bd5"
+               }
+            }

@@ -17,7 +17,17 @@ const SpendingsSchema = new Schema<ISpending>({
       enum: Object.values(Category)
    },
 
-   budget: {
+   description: {
+      type: String,
+      required: true
+   },
+
+   amount: {
+      type: Number,
+      required: true
+   },
+
+   sourceBudget: {
       type: String, 
       ref: config.mongodb.collections.budgets,
       required: true

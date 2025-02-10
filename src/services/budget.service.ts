@@ -13,16 +13,16 @@ export const createBudget = async (amount: string, category: BudgetType, frequen
       const parsedAmount = parseInt(amount);
       const parsedPin = parseInt(pin)
 
-      let duration;
-      if (category=="DAY") {
-         duration = 1
-      } else if (category == "WEEKLY") {
-         duration = 7
-      } else if (category == 'MONTHLY') {
-         duration = 30
-      } else {
-         duration = 5
-      }
+      // let duration;
+      // if (category=="DAY") {
+      //    duration = 1
+      // } else if (category == "WEEKLY") {
+      //    duration = 7
+      // } else if (category == 'MONTHLY') {
+      //    duration = 30
+      // } else {
+      //    duration = 5
+      // }
 
       const savings = await SavingsDb.findOne({
          user: userId
@@ -40,7 +40,7 @@ export const createBudget = async (amount: string, category: BudgetType, frequen
       const budget = new BudgetDb({
          amount: parsedAmount,
          category: category.toUpperCase(),
-         duration,
+         // duration,
          frequency,
          user: userId
       })

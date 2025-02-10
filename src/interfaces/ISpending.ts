@@ -3,13 +3,18 @@ import { Document } from 'mongoose'
 export interface ISpending extends Document {
    _id: string;
   category: Category;
-  budget: string;
+  description: string;
+  amount: number;
+  sourceBudget: string;
   user: string;
 }
 
 export enum Category {
-  "Food" = "Food",
-  "Clothing" = "Clothing",
-  "Transport" = "Transportation",
-  "Emergency" = "Emergency"
+  food = "FOOD",
+  clothing = "CLOTHING",
+  transport = "TRANSPORTATION",
+  emergency = "EMERGENCY",
+  bills = "BILLS",
+  topup = "TOPUP",
+  other = "OTHER"
 }
