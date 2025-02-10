@@ -2,27 +2,17 @@ import { userDb, SavingsDb, BudgetDb  } from "../database";
 import { BadRequestError, InternalServiceError, NotFoundError, } from "../exceptions";
 import { IService, IBudget, ISavings, BudgetType } from "../interfaces";
 import { APIFeatures } from "../helpers";
+import { differenceInDays } from "date-fns";
 
 
 export const createBudget = async (amount: string, category: BudgetType, frequency: number, pin: string, userId: string): Promise<IService> => {
    try {
       const user = await userDb.findOne({
          _id: userId
-      })
+      });
 
       const parsedAmount = parseInt(amount);
       const parsedPin = parseInt(pin)
-
-      // let duration;
-      // if (category=="DAY") {
-      //    duration = 1
-      // } else if (category == "WEEKLY") {
-      //    duration = 7
-      // } else if (category == 'MONTHLY') {
-      //    duration = 30
-      // } else {
-      //    duration = 5
-      // }
 
       const savings = await SavingsDb.findOne({
          user: userId
@@ -35,12 +25,14 @@ export const createBudget = async (amount: string, category: BudgetType, frequen
       // deduct from savings balance
       // @ts-ignore
       savings?.amount -= parsedAmount;
-      await savings?.save();
 
+      const { allowed, remainingDays } = await canCreateBudget(userId)
+      if (!allowed) {
+         throw new BadRequestError(`You already have an active budget. ${remainingDays} days left before you can create a new one.`)
+      }
       const budget = new BudgetDb({
          amount: parsedAmount,
          category: category.toUpperCase(),
-         // duration,
          frequency,
          user: userId
       })
@@ -49,6 +41,7 @@ export const createBudget = async (amount: string, category: BudgetType, frequen
          throw new BadRequestError("Invalid Pin")
       }
 
+      await savings?.save(); //save deduction from savings
       await budget.save()
       
       return {
@@ -58,7 +51,6 @@ export const createBudget = async (amount: string, category: BudgetType, frequen
          data: budget.id
       }
    } catch (error: any) {
-      console.log(error)
       return {
          status: 500,
          success: false,
@@ -75,7 +67,7 @@ export const getABudget = async (userId: string, id: string): Promise<IService> 
       await BudgetDb.deleteMany({ _id: id, deleteAt: { $lte: now } });
 
       const budget = await BudgetDb.findOne({_id: id, user: userId, deleteAt: { $gt: now }})
-
+      // getRemainingDays(budget?.createdAt, budget?.duration)
       if (!budget) {
          throw new NotFoundError(`Budget with ID: ${id} not found`)
       }
@@ -205,3 +197,36 @@ export const transferToUsername = async (userId: string, budgetId: string, amoun
    }
 }
 
+const canCreateBudget = async (userId: string): Promise<{ allowed: boolean; remainingDays?: number }> => {
+   const activeBudget = await BudgetDb.findOne({ 
+      user: userId, 
+      createdAt: { $exists: true }
+   }).sort({ createdAt: -1 }); // Get the latest budget
+
+   if (!activeBudget) {
+      return { allowed: true };
+   }
+
+   const { createdAt, duration } = activeBudget;
+   const endDate = new Date(createdAt);
+   endDate.setDate(endDate.getDate() + duration);
+
+   const today = new Date();
+   const remainingDays = differenceInDays(endDate, today);
+
+   if (remainingDays > 0) {
+      return { allowed: false, remainingDays };
+   }
+
+   return { allowed: true };
+}
+
+const getRemainingDays = (startDate: Date, duration: number): number => {
+   const endDate = new Date(startDate);
+   endDate.setDate(endDate.getDate() + duration);
+
+   const today = new Date();
+   const remainingDays = differenceInDays(endDate, today);
+
+   return remainingDays > 0 ? remainingDays : 0; // Ensure it doesn't return negative days
+}

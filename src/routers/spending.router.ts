@@ -8,3 +8,4 @@ export const SpendingRouter = Router()
 SpendingRouter.post('/spending', RequireAuth, HandleMakeSpending);
 SpendingRouter.get('/spending', RequireAuth, HandleGetTransactions);
 SpendingRouter.get('/spending/:id', RequireAuth, HandleGetTransactionById);
+// SpendingRouter.get('/spending/analytics', RequireAuth, )
