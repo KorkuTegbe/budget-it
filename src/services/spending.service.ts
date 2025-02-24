@@ -1,6 +1,6 @@
-import { BudgetDb, SpendingDb, userDb  } from "../database";
+import { BudgetDb, SpendingDb, userDb, TransactionDb  } from "../database";
 import { BadRequestError, NotFoundError, } from "../exceptions";
-import { IService, IBudget, ISearchQuery, ISpending } from "../interfaces";
+import { IService } from "../interfaces";
 import { APIFeatures } from "../helpers";
 
 
@@ -30,6 +30,13 @@ export const makeSpending = async (userId: string, amount: number, category: str
             description,
             amount, 
             sourceBudget,
+            user: userId
+         })
+
+         // transaction
+         await TransactionDb.create({
+            description,
+            status: 'completed',
             user: userId
          })
       }else {
@@ -70,13 +77,17 @@ export const getSpendingTransactions = async (userId: string,
       const skip = (page - 1) * limit;
 
       // Fetch budgets with sorting, pagination, and filter
-      const history = await SpendingDb.find(filter)
+      // const history = await SpendingDb.find(filter)
+      //    .sort({ [sortBy]: sortOrder === 'DESC' ? 1 : -1 })
+      //    .skip(skip)
+      //    .limit(limit).select('description amount createdAt');
+      const history = await TransactionDb.find(filter)
          .sort({ [sortBy]: sortOrder === 'DESC' ? 1 : -1 })
          .skip(skip)
-         .limit(limit).select('description amount createdAt');
+         .limit(limit).select('description status createdAt')
 
       // Count total documents for pagination metadata
-      const total = await SpendingDb.countDocuments(filter);
+      const total = await TransactionDb.countDocuments(filter);
 
       return {
          status: 200,

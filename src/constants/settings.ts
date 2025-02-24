@@ -6,7 +6,8 @@ export const config = {
             users: 'users',
             savings: 'savings',
             budgets: 'budgets',
-            spendings: 'spendings'
+            spendings: 'spendings',
+            transactions: "transactions"
         }
     },
     google: {

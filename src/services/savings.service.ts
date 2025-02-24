@@ -1,4 +1,4 @@
-import { userDb, BudgetDb, SavingsDb  } from "../database";
+import { userDb, BudgetDb, SavingsDb, TransactionDb  } from "../database";
 import { BadRequestError, NotFoundError, } from "../exceptions";
 import { IService, IBudget, ISearchQuery, ISavings } from "../interfaces";
 import { APIFeatures } from "../helpers";
@@ -40,6 +40,12 @@ export const topUpBalance = async (userId: string, savingsId: string, amount: nu
 
       savings.amount += amount;
       await savings.save();
+
+      await TransactionDb.create({
+         description: `You topped up your balance with ${amount}`,
+         status: 'completed',
+         user: userId
+      })
 
       return {
          status: 200,

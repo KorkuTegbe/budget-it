@@ -1,4 +1,4 @@
-import { userDb, SavingsDb, BudgetDb  } from "../database";
+import { userDb, SavingsDb, BudgetDb, TransactionDb  } from "../database";
 import { BadRequestError, InternalServiceError, NotFoundError, } from "../exceptions";
 import { IService, IBudget, ISavings, BudgetType } from "../interfaces";
 import { APIFeatures } from "../helpers";
@@ -43,6 +43,13 @@ export const createBudget = async (amount: string, category: BudgetType, frequen
 
       await savings?.save(); //save deduction from savings
       await budget.save()
+
+      // transaction
+      await TransactionDb.create({
+         description: `You created a budget with NGN${amount}`,
+         status: 'completed',
+         user: userId
+      })
       
       return {
          status: 200,
@@ -181,6 +188,12 @@ export const transferToUsername = async (userId: string, budgetId: string, amoun
       // @ts-ignore
       userSavings?.amount += amount;
       await userSavings?.save()
+
+      await TransactionDb.create({
+         description: `You transferred NGN${amount} to ${username}`,
+         status: 'completed',
+         user: userId
+      })
 
       return {
          status: 200,

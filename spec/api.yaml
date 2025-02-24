@@ -367,7 +367,7 @@ paths:
 
    /spending:
       post:
-         summary: 'Endpoint to create a transaction'
+         summary: 'Endpoint to make a transaction'
          tags:
             - transactions
          operationId: 'CreateSpendingRequest'
@@ -393,7 +393,7 @@ paths:
                      schema:
                         $ref: '#/components/schemas/BadRequestResponse'
       get:
-         summary: "Endpoint to get a user's spending transactions"
+         summary: "Endpoint to get a user's transaction history"
          tags:
             - transactions
          operationId: "GetUserTransactions"
