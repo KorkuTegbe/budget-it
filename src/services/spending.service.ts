@@ -137,19 +137,289 @@ export const getTransactionById = async (userId: string, id: string): Promise<IS
    }
 }
 
-export const getSpendingAnalytics = async (): Promise<IService> => {
+// export const getSpendingAnalytics = async (userId: string): Promise<IService> => {
+//    try {
+
+//       return {
+//          status: 200,
+//          success: true,
+//          message: ''
+//       }
+//    } catch (error: any) {
+//       return {
+//          status: error.statusCode,
+//          success: false,
+//          message: error.message
+//       };
+//    }
+// }
+
+/** ############################################ */
+
+// export const getSpendingAnalytics = async (userId: string): Promise<IService> => {
+//    try {
+//       // Get all spendings for the user
+//       const spendings = await SpendingDb.find({ user: userId });
+//       console.log(spendings)
+//       if (spendings.length === 0) {
+//          return {
+//             status: 200,
+//             success: true,
+//             message: 'No spendings yet',
+//             data: {}
+//          };
+//       }
+
+//       // Total amount spent
+//       const totalSpent = spendings.reduce((sum, s) => sum + s.amount, 0);
+
+//       // Spending per category
+//       const spendingByCategory: Record<string, number> = {};
+//       spendings.forEach(s => {
+//          const category = s.category.toUpperCase();
+//          spendingByCategory[category] = (spendingByCategory[category] || 0) + s.amount;
+//       });
+
+//       // Average spending
+//       const averageSpending = totalSpent / spendings.length;
+
+//       // Spending over time (optional: by day or month)
+//       const spendingOverTime: Record<string, number> = {};
+//       spendings.forEach(s => {
+//          // @ts-ignore
+//          const dateKey = new Date(s.createdAt).toISOString().split('T')[0]; // YYYY-MM-DD
+//          spendingOverTime[dateKey] = (spendingOverTime[dateKey] || 0) + s.amount;
+//       });
+
+//       return {
+//          status: 200,
+//          success: true,
+//          message: 'Analytics generated successfully',
+//          data: {
+//             totalSpent,
+//             averageSpending,
+//             totalTransactions: spendings.length,
+//             spendingByCategory,
+//             spendingOverTime
+//          }
+//       };
+//    } catch (error: any) {
+//       return {
+//          status: error.statusCode || 500,
+//          success: false,
+//          message: error.message
+//       };
+//    }
+// }
+
+/** export interface SpendingAnalyticsQuery {
+   from?: string; // ISO date string
+   to?: string;   // ISO date string
+   category?: string;
+}
+
+export const getSpendingAnalytics = async (
+   userId: string,
+   query: SpendingAnalyticsQuery = {}
+): Promise<IService> => {
    try {
+      const matchStage: any = { user: userId };
+
+      if (query.from || query.to) {
+         matchStage.createdAt = {};
+         if (query.from) matchStage.createdAt.$gte = new Date(query.from);
+         if (query.to) matchStage.createdAt.$lte = new Date(query.to);
+      }
+
+      if (query.category) {
+         matchStage.category = query.category.toUpperCase();
+      }
+
+      const pipeline = [
+         { $match: matchStage },
+         {
+            $group: {
+               _id: '$category',
+               totalAmount: { $sum: '$amount' },
+               transactions: { $sum: 1 }
+            }
+         },
+         {
+            $group: {
+               _id: null,
+               totalSpent: { $sum: '$totalAmount' },
+               totalTransactions: { $sum: '$transactions' },
+               categories: {
+                  $push: {
+                     category: '$_id',
+                     amount: '$totalAmount',
+                     count: '$transactions'
+                  }
+               }
+            }
+         },
+         {
+            $project: {
+               _id: 0,
+               totalSpent: 1,
+               totalTransactions: 1,
+               averageSpending: {
+                  $cond: [
+                     { $eq: ['$totalTransactions', 0] },
+                     0,
+                     { $divide: ['$totalSpent', '$totalTransactions'] }
+                  ]
+               },
+               spendingByCategory: '$categories'
+            }
+         }
+      ];
+
+      const analytics = await SpendingDb.aggregate(pipeline);
 
       return {
          status: 200,
          success: true,
-         message: 'Savings balance topup successful'
-      }
+         message: 'Analytics generated successfully',
+         data: analytics[0] || {
+            totalSpent: 0,
+            totalTransactions: 0,
+            averageSpending: 0,
+            spendingByCategory: []
+         }
+      };
    } catch (error: any) {
       return {
-         status: error.statusCode,
+         status: error.statusCode || 500,
          success: false,
          message: error.message
       };
    }
+};
+*/
+
+export interface SpendingAnalyticsQuery {
+   from?: string; // ISO date string
+   to?: string;   // ISO date string
+   category?: string;
+   groupBy?: 'day' | 'week' | 'month'; // Optional time grouping
 }
+
+export const getSpendingAnalytics = async (
+   userId: string,
+   query: SpendingAnalyticsQuery = {}
+): Promise<IService> => {
+   try {
+      const matchStage: any = { user: userId };
+
+      if (query.from || query.to) {
+         matchStage.createdAt = {};
+         if (query.from) matchStage.createdAt.$gte = new Date(query.from);
+         if (query.to) matchStage.createdAt.$lte = new Date(query.to);
+      }
+
+      if (query.category) {
+         matchStage.category = query.category.toUpperCase();
+      }
+
+      const groupFormatMap = {
+         day: '%Y-%m-%d',
+         week: '%Y-%U',     // year-weekNumber
+         month: '%Y-%m'
+      };
+
+      const dateFormat = groupFormatMap[query.groupBy || 'day'];
+
+      const pipeline = [
+         { $match: matchStage },
+
+         // Spending by time
+         {
+            $facet: {
+               overall: [
+                  {
+                     $group: {
+                        _id: '$category',
+                        totalAmount: { $sum: '$amount' },
+                        transactions: { $sum: 1 }
+                     }
+                  },
+                  {
+                     $group: {
+                        _id: null,
+                        totalSpent: { $sum: '$totalAmount' },
+                        totalTransactions: { $sum: '$transactions' },
+                        categories: {
+                           $push: {
+                              category: '$_id',
+                              amount: '$totalAmount',
+                              count: '$transactions'
+                           }
+                        }
+                     }
+                  },
+                  {
+                     $project: {
+                        _id: 0,
+                        totalSpent: 1,
+                        totalTransactions: 1,
+                        averageSpending: {
+                           $cond: [
+                              { $eq: ['$totalTransactions', 0] },
+                              0,
+                              { $divide: ['$totalSpent', '$totalTransactions'] }
+                           ]
+                        },
+                        spendingByCategory: '$categories'
+                     }
+                  }
+               ],
+               overTime: [
+                  {
+                     $group: {
+                        _id: {
+                           $dateToString: {
+                              format: dateFormat,
+                              date: '$createdAt'
+                           }
+                        },
+                        totalAmount: { $sum: '$amount' }
+                     }
+                  },
+                  { $sort: { _id: 1 } }
+               ]
+            }
+         },
+         {
+            $project: {
+               overall: { $arrayElemAt: ['$overall', 0] },
+               spendingOverTime: '$overTime'
+            }
+         }
+      ];
+      // @ts-ignore
+      const analytics = await SpendingDb.aggregate(pipeline);
+
+      return {
+         status: 200,
+         success: true,
+         message: 'Analytics generated successfully',
+         data: analytics[0] || {
+            overall: {
+               totalSpent: 0,
+               totalTransactions: 0,
+               averageSpending: 0,
+               spendingByCategory: []
+            },
+            spendingOverTime: []
+         }
+      };
+   } catch (error: any) {
+      return {
+         status: error.statusCode || 500,
+         success: false,
+         message: error.message
+      };
+   }
+};
+

@@ -441,6 +441,32 @@ paths:
                      schema:
                         $ref: '#/components/schemas/ErrorResponse'
 
+   /analytics:
+      get:
+         summary: 'Endpoint to get transaction details of a single spend'
+         tags:
+            - transactions
+         operationId: GetAnalyticsRequest
+         parameters:
+            - $ref: '#/components/parameters/AuthToken'
+            - $ref: "#/components/parameters/From"
+            - $ref: "#/components/parameters/To"
+            - $ref: "#/components/parameters/Category"
+            - $ref: "#/components/parameters/GroupBy"
+         responses:
+            '200':
+               description: 'success'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/AnalyticsResponse'
+            '400':
+               description: 'error'
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+
 components:
    parameters:
       UserId:
@@ -502,6 +528,46 @@ components:
       Fields:
          name: fields
          description: Filter to select useful fields
+         in: query
+         schema:
+         type: string
+         maxLength: 100
+         minLength: 1
+         required: false
+      
+      From:
+         name: from
+         description: Filter to select date to start analytic period
+         in: query
+         schema:
+         type: string
+         maxLength: 100
+         minLength: 1
+         required: false
+
+      To:
+         name: to
+         description: Filter to select date to end analytic period
+         in: query
+         schema:
+         type: string
+         maxLength: 100
+         minLength: 1
+         required: false
+
+      Category:
+         name: category
+         description: Filter to select category for analytics
+         in: query
+         schema:
+         type: string
+         maxLength: 100
+         minLength: 1
+         required: false
+
+      GroupBy:
+         name: groupBy
+         description: Filter to group by day | week | month
          in: query
          schema:
          type: string
@@ -920,5 +986,47 @@ components:
                   "createdAt": "2025-02-10T00:09:15.872Z",
                   "updatedAt": "2025-02-10T00:09:15.872Z",
                   "id": "ee5bd0a5-4143-4513-ac3f-5cc2833a8bd5"
+               }
+            }
+
+      AnalyticsResponse: 
+         type: object
+         properties:
+            status: 
+               type: number
+            success:
+               type: string
+            message:
+               type: string
+            data:
+               type: object
+         example:
+            {
+               "status": 200,
+               "success": true,
+               "message": "Analytics generated successfully",
+               "data": {
+                  "overall": {
+                     "totalSpent": 2400,
+                     "totalTransactions": 7,
+                     "averageSpending": 342.85714285714283,
+                     "spendingByCategory": [
+                     {
+                        "category": "FOOD",
+                        "amount": 2400,
+                        "count": 7
+                     }
+                     ]
+                  },
+                  "spendingOverTime": [
+                     {
+                     "_id": "2025-02-09",
+                     "totalAmount": 2100
+                     },
+                     {
+                     "_id": "2025-02-10",
+                     "totalAmount": 300
+                     }
+                  ]
                }
             }

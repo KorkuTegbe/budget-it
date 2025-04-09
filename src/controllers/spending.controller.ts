@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { makeSpending, getSpendingAnalytics, getSpendingTransactions, getTransactionById } from "../services";
+import { makeSpending, getSpendingAnalytics, getSpendingTransactions, getTransactionById, SpendingAnalyticsQuery } from "../services";
 
 
 
@@ -50,14 +50,14 @@ export const HandleSpendingAnalytics = async (req: Request, res: Response) => {
    try{
       // @ts-ignore 
       const userId = req.user.id;
-      const { id } = req.params;
-      const { amount } = req.body;
+      const { from, to, category, groupBy }: SpendingAnalyticsQuery = req.query
 
-      const response = await getSpendingAnalytics()
+      const response = await getSpendingAnalytics(userId, {from, to, category, groupBy})
 
       return res.status(200).json(response);
        
    }catch(err: any){
+      console.log(err.stack)
       return res.json(err.message)
    }    
 }
